@@ -1,0 +1,80 @@
+<div id="partners-container">
+
+<iframe name='submit-iframe' style='display: none;'></iframe>
+	<div class="partners-home-view">
+		<div class="section-title">
+			<span id="edit-sponsors-title">Edit Partners</span>
+		</div>
+
+		<div id="successPlaceholder" class="hide">
+			<i class="fa fa-check pr5" style="color:green"></i><span class="successText">You have successfully created new sponsor for your event. Add more sponsors or proceed to next step.</span>
+		</div>
+
+		<div id="errorPlaceholder" class="hide">
+			<i class="fa fa-warning pr5" style="color:orangered"></i><span class="errorText">Something went wrong. Contact system admin for more details</span>
+		</div>
+		
+		<div id="addSponsorBtnWrapper" class="right">
+				<a id="add-new-sponsor-btn" class="btn btn-light-blue"><i class="fa fa-plus pr5"></i>Add Sponsor</a>
+		</div>
+		<div id="sponsorTableWrapper" class="mb40">
+			<table id="sponsorsDTable" class="display" width="100%"></table>	
+		</div>	
+	</div>
+
+	<div id="add-new-sponsor-inline" class="hide">
+	<form method="POST" id="sponsorForm" class="partner-form">
+				<div id="partner-details-container" class="bg-thick-grey p20">
+					<div class="header">
+						<div class="left">
+							<span>Sponsor Basic Information - Tell us about your Sponsor<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a href="#" class="toggle link clblue" data-reference="#partner-details-container"><i class="fa fa-compress clblue pr5"></i>Hide</a>
+						</div>
+
+					</div>
+					<div class="body">
+						<!--Just add input boxes, no labels-->
+						<input type="text" class="mt15" placeholder="Give it a short title for your partner" id="sponsorTitle" name="sponsorTitle" data-validation="required"/>
+						<input type="text" class="mt15" placeholder="Enter company name who is sponsoring the event" id="name" name="name" data-validation="required"/>
+						<input type="text" class="mt15" placeholder="Enter company's website link" id="websiteLink" name="websiteLink" data-validation="url"/>
+
+						<input type="hidden" id="eventIdSponsor" name="eventId"/>
+						<input type="hidden" id="sponsorImgBase64" name="imgBase64" data-validation="required"/> 
+    					<input type="hidden" id="sponsorImgId" name="image"/>
+
+					</div>
+				</div>
+				</form> <!-- Event Form Ends Here -->
+				<div id="partner-banner-container" class="bg-thick-grey p20 mt30">
+					<div class="header">
+						<div class="left">
+							<span>Sponsor Logo - Upload company logo<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#partner-banner-container"><i class="fa fa-compress clblue pr5"></i>Hide</a>
+						</div>
+					</div>
+					<div class="body">
+						<form id="sponsorphoto_form" method="POST" enctype="multipart/form-data" class="sponsorphoto-form" target="submit-iframe">
+							<div>
+								 <img id="sponsorImgBanner" src="../images/noimage.png" width="760px" height="250px"/>
+								 <div id="upload-sponsor" class="mt40">
+									<a class="btn btn-small btn-black" style="cursor: pointer !important;">Upload Sponsor Logo</a>
+									<input type="file" id="sponsorImg" class="file" name="*">
+								</div>
+								<input type="hidden" name="*@TypeHint" value="nt:file" />
+							</div>
+						</form> <!-- Event Banner Form Ends Here -->
+					</div>
+				</div>
+				<div id="sponsor-action-links-wrapper" class="mt30">
+					<ul class="fx fx-center mb40">
+						<li class="left pr20"><a id="cancel-sponsor-btn" class="btn btn-black"><i class="fa fa-times-circle pr5"></i>Cancel</a></li>
+						<li class="right"><a id="save-sponsor-btn" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Save</a></li>
+						<li class="right"><a id="update-sponsor-btn" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Update</a></li>
+					</ul>
+				</div>	
+		</div>				
+</div>

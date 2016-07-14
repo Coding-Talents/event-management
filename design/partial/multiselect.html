@@ -1,0 +1,113 @@
+<script src="../lib/multiselect.js"></script>
+<style type="text/css">
+.row {
+	margin-right: -15px;
+	margin-left: -15px;
+}
+.col-xs-5 {
+    width: 41.66666667%;
+}
+.col-xs-2 {
+    width: 16.66666667%;
+}
+.col{
+	position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+}
+.dialogbtn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+.btn-block {
+    display: block;
+    width: 100%;
+}
+.btn-block+.btn-block {
+    margin-top: 5px;
+}
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+.btn-warning {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+.btn-default.active, .btn-default.focus, .btn-default:active, .btn-default:focus, .btn-default:hover, .open>.dropdown-toggle.btn-default {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+select[multiple], select[size] {
+    height: auto;
+}
+.form-control {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.dialogbtn .glyphicon, #undo_redo_rightAll, #undo_redo_leftAll{
+	font-weight: 600;
+}
+</style>
+<div class="row">
+	<div class="fx fx-center title mb40">
+		<span>Choose speakers from other sessions</span>
+	</div>
+
+	<div class="fx fx-center error mb40">
+		<span></span>
+	</div>
+
+	<div class="col col-xs-5">
+		<select name="from[]" id="undo_redo" class="form-control" size="13" multiple="multiple">
+		</select>
+	</div>
+	
+	<div class="col col-xs-2 mt15">
+		<button type="button" id="undo_redo_undo" class="dialogbtn btn-default btn-block"><i class="fa fa-undo"></i></button>
+		<button type="button" id="undo_redo_rightAll" class="dialogbtn btn-default btn-block"><i class="fa fa-angle-double-right"></i>  </button>
+		<button type="button" id="undo_redo_rightSelected" class="dialogbtn btn-default btn-block"><i class="fa fa-arrow-circle-right">  </i></button>
+		<button type="button" id="undo_redo_leftSelected" class="dialogbtn btn-default btn-block"><i class="fa fa-arrow-circle-left">  </i></button>
+		<button type="button" id="undo_redo_leftAll" class="dialogbtn btn-default btn-block"><i class="fa fa-angle-double-left"></i> </button>
+		<button type="button" id="undo_redo_redo" class="dialogbtn btn-default btn-block"><i class="fa fa-repeat"></i></button>
+	</div>
+	
+	<div class="col col-xs-5">
+		<select name="to[]" id="undo_redo_to" class="form-control" size="13" multiple="multiple"></select>
+	</div>
+</div>

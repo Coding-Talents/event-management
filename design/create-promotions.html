@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Promotions</title>
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/jquery-ui.css">
+	<link rel="stylesheet" href="../css/jquery.timepicker.css">
+	<link rel="stylesheet" href="../css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="../css/font-awesome-4.4.0/css/font-awesome.min.css">
+	<link href="../css/validator-theme-default.min.css" rel="stylesheet" type="text/css" />
+	
+	<script src="../lib/jquery-2.1.4.min.js"></script>
+	<script src="../lib/jquery-ui.js"></script>
+	<script src="../lib/jquery.timepicker.js"></script>
+	<script src="/system/sling.js"></script>
+	<script src="../js/main.js"></script>
+	<script type="text/javascript" src="../lib/jquery.dataTables.min.js"></script>
+	<script src="../lib/jquery.form-validator.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			accessControl();
+			$('#username').text(Sling.getSessionInfo().userID);
+			console.log(" create promotion ready");
+			$('#promotion-details-container .right .toggle').html("<i class='fa fa-compress clblue pr5'></i>Hide");
+			loadPromotionsTable();
+			registerAddNewPromotionBtn(); 
+			registerToggleContainer('.steps .header .right .toggle');
+			registerPromotionCancelBtn();
+			registerPromotionSaveBtn();
+			registerPromotionUpdateBtn();
+			registerPromotionPublishBtn();
+			$("#promotionImg").change(function(){
+			    readImage(this);
+			});
+
+			$("#deletePromotionDialog").dialog({
+				autoOpen: false,
+				modal: true,
+				width: 450,
+				height: 200,
+				resizable:false,
+				dialogClass: "dlg-no-close"
+			});
+
+			$("#publishPromotionDialog").dialog({
+				autoOpen: false,
+				modal: true,
+				width: 500,
+				height: 'auto',
+				resizable:false,
+				dialogClass: "dlg-no-close"
+			});
+
+			$("#navigationDialog").dialog({
+				autoOpen: false,
+				modal: true,
+				width: 450,
+				height: 200,
+				resizable:false,
+				dialogClass: "dlg-no-close"
+			});
+
+			$.validate({
+				form : '#promotionForm'
+			});
+
+			addDatePicker();
+		});
+	</script>
+
+</head>
+<body class="cblack bg-thin-grey">
+	<!-- Iframe for lazy delete -->
+	<iframe name='submit-iframe' style='display: none;'></iframe>
+
+	<header class="cwhite bg-black">
+		<div class="container">
+			<nav class="navbar fs20" role="navigation">
+				<div class="left mt15">
+					<a href="home.html" class="logo"><img src="../images/app_icon.png"></a>
+				</div>
+				<div class="center">
+					<h3 class="pl20">Event Administration</h3>
+				</div>
+				<div class="right mt15">
+					<ul>
+                        <li class="left"><span class="box-white"><i class="fa fa-user pr5"></i> <span id="username">Anonymous</span></li>
+                        <li class="left pl20"><a href="https://youtu.be/mwmcjQ5XCT0" target="_blank"class="link cwhite" target="_blank"><i class="fa fa-info-circle pr5"></i>Help</a></li>
+                        <li class="left pl20"><a href="/system/sling/logout.html" class="link cwhite" target="_blank"><i class="fa fa-power-off pr5"></i> Logout</a></li>
+                    </ul>
+				</div>
+            </nav>
+		</div>
+	</header>
+	<div class="container grid">
+		<div class="left grid-col col25 mt15">
+			<div id="navcontainer">
+				<ul class="side-nav-links bg-white">
+					<li class="selected fs20">
+						<a onclick="checkNavFlow('/IgniteAdmin/design/home.html')" class="link capshaltgrey"><i class="fa fa-home pr10"></i>Events</a>
+					</li> 
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-speakers.html')" class="link capshaltgrey"><i class="fa fa-user pr10"></i>Speakers</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-promotions.html')" class="link capshaltgrey"><i class="fa fa-star pr10"></i>Promotions</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-sponsors.html')" class="link capshaltgrey"><i class="fa fa-users pr10"></i>Sponsors</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-surveyquestions.html')" class="link capshaltgrey"><i class="fa fa-question pr10"></i>Survey Questions</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/admin-dashboard.html')" class="link capshaltgrey"><i class="fa fa-cogs pr10"></i>Admin Dashboard</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="right grid-col col70 mt45">
+			<div class="section-title mb40">
+					<span>All Promotions</span>
+			</div>
+			<div id="successPlaceholder" class="hide">
+				<i class="fa fa-check pr5" style="color:green"></i><span class="successText">Promotion has been deleted successfully</span>
+			</div>
+
+			<div id="errorPlaceholder" class="hide">
+				<i class="fa fa-warning pr5" style="color:orangered"></i><span class="errorText">Something went wrong. Contact system admin for more details</span>
+			</div>
+
+			<div id="createPromotionsBtnWrapper" class="right">
+				<a id="add-new-promotion-link" class="btn btn-light-blue"><i class="fa fa-plus"></i><span class="pl5">Add Promotion</span></a>
+			</div>
+			<div id="promotionsTableWrapper" class="mb40">
+				<table id="promotionsDTable" class="display" width="100%"></table>
+			</div>
+			<div class="fx publish-prom fx-center mt30 mb30">
+				<a href="#" class="btn btn-light-blue" id="publish-promotions"><i class="fa fa-send-o pr5"></i>Publish Promotions</a>
+			</div>
+
+			<div class="steps hide mt40" id="add-new-promotion">
+				<form method="POST" id="promotionForm" class="event-form">
+				<div id="promotion-details-container" class="bg-thick-grey p20">
+					<div class="header">
+						<div class="left">
+							<span>Promotion Basic Information<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#promotion-details-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div class="body">
+						<!--Just add input boxes, no labels-->
+						<input type="text" id="promotionTitle" class="mt15" placeholder="Enter the promotion title" name="promotionTitle" data-validation="required"/>
+						<input type="text" id="rsvpLink" class="mt15" placeholder="Enter the RSVP link" name="rsvpLink" data-validation="url"/>
+						<ul class="datetime">
+							<li class="dt-date">
+								<input type="text" class="date" placeholder="Start Date" id="fromDate" name="fromDate" data-validation="date" data-validation-format="mm/dd/yyyy"/><i class="fa fa-calendar right pr5"></i>
+							</li>
+       						<li class="dt-time">
+       							<input type="text" class="time" placeholder="Start Time" id="fromTime" name="fromTime" data-validation="custom" data-validation-regexp="^\d\d:\d\d [APap][mM]$"/><i class="fa fa-clock-o right pr5"></i>
+       						</li>
+       						<li class="dt-date">
+       							<input type="text" class="date" placeholder="End Date" id="toDate" name="toDate" data-validation="date" data-validation-format="mm/dd/yyyy"/><i class="fa fa-calendar right pr5"></i>
+       						</li>
+       						<li class="dt-time">
+       							<input type="text" class="time" placeholder="End Time" id="toTime" name="toTime" data-validation="custom" data-validation-regexp="^\d\d:\d\d [APap][mM]$"/><i class="fa fa-clock-o right pr5"></i>
+       						</li>
+						</ul>
+						<select id="events_dropdown" name="events_dropdown" data-validation="required">
+				        	<option value="0"  disabled>Select Event</option>
+				        </select>			
+					</div>
+				</div>
+
+					<input type="hidden" id="calendarEventId" name="calendarEventId"/>
+					<input type="hidden" id="eventTitle" name="eventTitle"/>
+					<input type="hidden" id="startDate" name="startDate"/>
+					<input type="hidden" id="startTime" name="startTime"/>
+					<input type="hidden" id="endDate" name="endDate"/>
+					<input type="hidden" id="endTime" name="endTime"/>
+					<input type="hidden" id="venue" name="venue"/>
+					<input type="hidden" id="locationLat" name="locationLat"/>
+					<input type="hidden" id="locationLong" name="locationLong"/>
+					<input type="hidden" id="promotionImgBase64" name="imgBase64" data-validation="required"/> 
+					<input type="hidden" id="promotionImgId" name="image" data-validation="required"/>
+
+				</form> <!-- Event Form Ends Here -->
+				<div id="promotion-banner-container" class="bg-thick-grey p20 mt30">
+					<div class="header">
+						<div class="left">
+							<span>Promotion Banner - Give us the image that suits your promotion<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#promotion-banner-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div class="body">
+						<form id="promotionbanner_form" method="POST" enctype="multipart/form-data" class="promotionbanner-form mt30" target="submit-iframe">
+							<div>
+								 <img id="promotionImgBanner" src="../images/noimage.png" width="760px" height="250px"/>
+								 <div id="upload-promotion" class="mt40">
+									<a class="btn btn-small btn-black" style="cursor: pointer !important;">Upload Promotion Image</a>
+									<input type="file" id="promotionImg" class="file" name="*">
+								</div>
+						    	 <input type="hidden" name="*@TypeHint" value="nt:file" />
+							</div>
+						</form> <!-- Promotion Banner Form Ends Here -->
+					</div>
+				</div>
+			</div> <!-- Step1 Ends Here--> 
+
+			<div id="promotion-action-links-wrapper" class="mt30 hide">
+				<ul class="fx fx-center mb40">
+					<li class="left pr20"><a id="cancel-promotion-link" class="btn btn-black"><i class="fa fa-times-circle pr5"></i>Cancel</a></li>
+					<li class="right"><a id="save-promotion-link" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Save</a></li>
+					<li class="right"><a id="update-promotion-link" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Update</a></li>
+				</ul>
+			</div>
+
+			<!-- Delete promotions form -->
+			<form id="delete_promotionform" method="POST" target="submit-iframe">
+			  	<input type="hidden" name=":operation" value="delete" >
+			</form>
+
+			<!-- Promotions delete dialog -->
+			<div id="deletePromotionDialog" class="hide">
+				<div class="header section-title">
+					<span class="msg">Are you sure to delete this promotion <i class="fa fa-question-circle"></i></span>
+				</div>
+				
+				<div class="footer fx fx-center mt30">
+					<span class="warningText"><i class="fa fa-warning pr5"></i>You can't undo this operation</span>
+				</div>
+
+				<div class="fx submit fx-center mt30">
+					<div class="right pr20">
+						<a class="btn btn-black" onclick="cancelDeletePromotion()" id="cancelDeletePromotionBtn"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+					</div>
+					<div class="left">
+						<a class="btn btn-light-blue" onclick="deletePromotionAction()" id="deletePromotionBtn"><i class="fa fa-trash pr5"></i>Delete</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Promotion publish dialog -->
+			<div id="publishPromotionDialog">
+				<div class="header section-title">
+					<span class="msg">Are you sure to publish all the promotions <i class="fa fa-question-circle"></i></span>
+				</div>
+				
+				<div class="footer fx fx-center mt30">
+					<span class="warningText"><i class="fa fa-warning pr5"></i>You can't undo this operation</span>
+				</div>
+
+				<div class="fx submit fx-center mt40 mb30">
+					<div class="right pr20">
+						<a class="btn btn-black" onclick="cancelPublishPromotion()" id="cancelDeleteEventBtn"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+					</div>
+					<div class="left">
+						<a class="btn btn-light-blue" onclick="publishPromotionAction()" id="deleteEventBtn"><i class="fa fa-send-o pr5"></i>Publish</a>
+					</div>
+				</div>
+
+				<div id="upload-progress-container" class="mt30 hide">
+					<ul>
+						<li><span class="pubpromotions text">Publishing promotions...</span></li>
+					</ul>
+					<div class="fx fx-center mb20"><a onclick="publishPromotionDone()" class="btn btn-light-blue done"><i class="fa fa-check pr5"></i>Done</a></div>
+				</div>
+
+			</div>
+
+			<!-- Navigation dialog -->
+			<div id="navigationDialog" class="hide">
+				<div class="header section-title">
+					<span class="msg">Are you sure you want to navigate<i class="fa fa-question-circle"></i></span>
+				</div>
+				
+				<div class="footer fx fx-center mt30">
+					<span class="warningText"><i class="fa fa-warning pr5"></i>You have unsaved changes.</span>
+				</div>
+
+				<span id="targetUrl"></span>
+
+				<div class="fx submit fx-center mt30">
+					<div class="right pr20">
+						<a class="btn btn-black" onclick="cancelNavigation()" id="cancelNavBtn"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+					</div>
+					<div class="left">
+						<a class="btn btn-light-blue" onclick="continueNavigation()" id="continueNavBtn"><i class="fa fa-trash pr5"></i>Ok</a>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</div>	
+</body>
+</html>

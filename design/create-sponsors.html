@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Partners</title>
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/jquery-ui.css">
+	<link rel="stylesheet" href="../css/jquery.timepicker.css">
+	<link rel="stylesheet" href="../css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="../css/font-awesome-4.4.0/css/font-awesome.min.css">
+	<link href="../css/validator-theme-default.min.css" rel="stylesheet" type="text/css" />
+	
+	<script src="../lib/jquery-2.1.4.min.js"></script>
+	<script src="../lib/jquery-ui.js"></script>
+	<script src="../lib/jquery.timepicker.js"></script>
+	<script src="/system/sling.js"></script>
+	<script src="../js/main.js"></script>
+	<script type="text/javascript" src="../lib/jquery.dataTables.min.js"></script>
+	<script src="../lib/jquery.form-validator.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			accessControl();
+			$('#username').text(Sling.getSessionInfo().userID);
+			registerAddNewSponsorLink();
+			registerSponsorSaveBtn(true);
+			registerSponsorCancelLink();
+			registerSponsorUpdateBtn(true);
+			loadSponsorsTable(true);
+
+			$("#sponsorImg").change(function(){
+		    	readImage(this);
+			});
+
+			$("#navigationDialog").dialog({
+				autoOpen: false,
+				modal: true,
+				width: 450,
+				height: 200,
+				resizable:false,
+				dialogClass: "dlg-no-close"
+			});
+
+			$("#deleteSponsorDialog").dialog({
+				autoOpen: false,
+				modal: true,
+				width: 420,
+				height: 200,
+				resizable:false,
+				dialogClass: "dlg-no-close"
+			});
+			$.validate({
+				form : '#sponsorForm'
+			});
+		});
+	</script>
+	<body class="cblack bg-thin-grey">
+	<!-- Iframe for lazy delete -->
+	<iframe name='submit-iframe' style='display: none;'></iframe>
+
+	<header class="cwhite bg-black">
+		<div class="container">
+			<nav class="navbar fs20" role="navigation">
+				<div class="left mt15">
+					<a href="home.html" class="logo"><img src="../images/app_icon.png"></a>
+				</div>
+				<div class="center">
+					<h3 class="pl20">Event Administration</h3>
+				</div>
+				<div class="right mt15">
+					<ul>
+                        <li class="left"><span class="box-white"><i class="fa fa-user pr5"></i> <span id="username">Anonymous</span></li>
+                        <li class="left pl20"><a href="https://youtu.be/mwmcjQ5XCT0" target="_blank"class="link cwhite" target="_blank"><i class="fa fa-info-circle pr5"></i>Help</a></li>
+                        <li class="left pl20"><a href="/system/sling/logout.html" class="link cwhite" target="_blank"><i class="fa fa-power-off pr5"></i> Logout</a></li>
+                    </ul>
+				</div>
+            </nav>
+		</div>
+	</header>
+	<div class="container grid">
+		<div class="left grid-col col25 mt15">
+			<div id="navcontainer">
+				<ul class="side-nav-links bg-white">
+					<li class="selected fs20">
+						<a onclick="checkNavFlow('/IgniteAdmin/design/home.html')" class="link capshaltgrey"><i class="fa fa-home pr10"></i>Events</a>
+					</li> 
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-speakers.html')" class="link capshaltgrey"><i class="fa fa-user pr10"></i>Speakers</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-promotions.html')" class="link capshaltgrey"><i class="fa fa-star pr10"></i>Promotions</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-sponsors.html')" class="link capshaltgrey"><i class="fa fa-users pr10"></i>Sponsors</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/create-surveyquestions.html')" class="link capshaltgrey"><i class="fa fa-question pr10"></i>Survey Questions</a>
+					</li>
+					<li>
+						<a onclick="checkNavFlow('/IgniteAdmin/design/admin-dashboard.html')" class="link capshaltgrey"><i class="fa fa-cogs pr10"></i>Admin Dashboard</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="right grid-col col70 mt45">
+			<div class="section-title mb40">
+					<span>All Promotions</span>
+			</div>
+			<div id="successPlaceholder" class="hide">
+				<i class="fa fa-check pr5" style="color:green"></i><span class="successText">Promotion has been deleted successfully</span>
+			</div>
+
+			<div id="errorPlaceholder" class="hide">
+				<i class="fa fa-warning pr5" style="color:orangered"></i><span class="errorText">Something went wrong. Contact system admin for more details</span>
+			</div>
+
+			<div id="createPromotionsBtnWrapper" class="right">
+				<a id="add-new-sponsor-link" class="btn btn-light-blue"><i class="fa fa-plus"></i><span class="pl5">Add Sponsor</span></a>
+			</div>
+			<div id="sponsorTableWrapper" class="mb40">
+				<table id="sponsorsDTable" class="display" width="100%"></table>	
+			</div>	
+			<div class="steps hide mt40" id="add-new-sponsor">
+				<form method="POST" id="sponsorForm" class="event-form">
+				<div id="sponsor-details-container" class="bg-thick-grey p20">
+					<div class="header">
+						<div class="left">
+							<span>Sponsor Basic Information<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#sponsor-details-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div class="body">
+						<!--Just add input boxes, no labels-->
+						<input type="text" class="mt15" placeholder="Give it a short title for your partner" id="sponsorTitle" name="sponsorTitle" data-validation="required"/>
+						<input type="text" class="mt15" placeholder="Enter company name who is sponsoring the event" id="name" name="name" data-validation="required"/>
+						<input type="text" class="mt15" placeholder="Enter company's website link" id="websiteLink" name="websiteLink" data-validation="url"/>
+
+						<input type="hidden" id="eventIdSponsor" name="eventId"/>
+						<input type="hidden" id="sponsorImgBase64" name="imgBase64" data-validation="required"/> 
+    					<input type="hidden" id="sponsorImgId" name="image"/>
+						<select id="events_dropdown" name="events_dropdown" data-validation="required" style="top: 11px; position: relative;">
+				        	<option value="0"  disabled>Select Event</option>
+				        </select>
+					</div>
+				</div>
+				</form> <!-- Event Form Ends Here -->
+				<div id="partner-banner-container" class="bg-thick-grey p20 mt30">
+					<div class="header">
+						<div class="left">
+							<span>Sponsor Logo - Upload company logo<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#partner-banner-container"><i class="fa fa-compress clblue pr5"></i>Hide</a>
+						</div>
+					</div>
+					<div class="body">
+						<form id="sponsorphoto_form" method="POST" enctype="multipart/form-data" class="sponsorphoto-form mt30" target="submit-iframe">
+							<div>
+								<img id="sponsorImgBanner" src="../images/noimage.png" width="760px" height="250px"/>
+								<div id="upload-sponsor" class="mt40">
+									<a class="btn btn-small btn-black" style="cursor: pointer !important;">Upload Sponsor Logo</a>
+									<input type="file" id="sponsorImg" class="file" name="*">
+								</div>
+						    	<input type="hidden" name="*@TypeHint" value="nt:file" />
+							</div>
+						</form> <!-- Event Banner Form Ends Here -->
+					</div>
+				</div>
+			</div> <!-- Step1 Ends Here--> 
+
+			<div id="sponsor-action-links-wrapper" class="mt30 hide">
+					<ul class="fx fx-center mb40">
+						<li class="left pr20"><a id="cancel-sponsor-btn" class="btn btn-black"><i class="fa fa-times-circle pr5"></i>Cancel</a></li>
+						<li class="right"><a id="save-sponsor-btn" class="btn btn-light-blue"><i class="fa fa-check-circle pr5"></i>Save</a></li>
+						<li class="right"><a id="update-sponsor-btn" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Update</a></li>
+					</ul>
+			</div>	
+
+			<!-- Delete sponsor form -->
+			<form id="delete_form" method="POST" target="submit-iframe">
+			  	<input type="hidden" name=":operation" value="delete" >
+			</form>
+
+			<!-- Partner delete dialog -->
+			<div id="deleteSponsorDialog" class="hide">
+				<div class="header section-title">
+					<span class="msg">Are you sure to delete the partner <i class="fa fa-question-circle"></i></span>
+				</div>
+				
+				<div class="footer fx fx-center mt30">
+					<span class="warningText"><i class="fa fa-warning pr5"></i>You can't undo this operation</span>
+				</div>
+
+				<div class="fx submit fx-center mt30">
+					<div class="right pr20">
+						<a class="btn btn-black" onclick="cancelDeleteSponsor()" id="cancelDeletePartnerBtn"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+					</div>
+					<div class="left">
+						<a class="btn btn-light-blue" onclick="deleteSponsorSponsorPage()" id="deletePartnerBtn"><i class="fa fa-trash pr5"></i>Delete</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation dialog -->
+			<div id="navigationDialog" class="hide">
+				<div class="header section-title">
+					<span class="msg">Are you sure you want to navigate<i class="fa fa-question-circle"></i></span>
+				</div>
+				
+				<div class="footer fx fx-center mt30">
+					<span class="warningText"><i class="fa fa-warning pr5"></i>You have unsaved changes.</span>
+				</div>
+
+				<span id="targetUrl"></span>
+
+				<div class="fx submit fx-center mt30">
+					<div class="right pr20">
+						<a class="btn btn-black" onclick="cancelNavigation()" id="cancelNavBtn"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+					</div>
+					<div class="left">
+						<a class="btn btn-light-blue" onclick="continueNavigation()" id="continueNavBtn"><i class="fa fa-trash pr5"></i>Ok</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>	
+</body>
+</html>

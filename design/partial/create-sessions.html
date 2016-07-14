@@ -1,0 +1,195 @@
+<div id="sessions-container">
+
+<iframe name='submit-iframe' style='display: none;'></iframe>
+
+	<div class="session-home-view">
+		<div class="section-title">
+			<span id="edit-sessions-title">Edit Sessions</span>
+		</div>
+
+		<div id="successPlaceholder" class="hide">
+			<i class="fa fa-check pr5" style="color:green"></i><span class="successText">You have successfully created new session for your event. Add more sessions or proceed to next step.</span>
+		</div>
+
+		<div id="errorPlaceholder" class="hide">
+			<i class="fa fa-warning pr5" style="color:orangered"></i><span class="errorText">Something went wrong. Contact system admin for more details</span>
+		</div>
+
+		<div id="addSessionBtnWrapper" class="right">
+				<a id="add-new-session-link" class="btn btn-light-blue"><i class="fa fa-plus pr5"></i>Add Session</a>
+		</div>
+		<div id="sessionsTableWrapper" class="mb40">
+			<table id="sessionsDTable" class="display" width="100%"></table>
+		</div>
+	</div>
+			<form method="POST" id="sessionForm" class="session-form hide">
+				<div id="session-details-container" class="bg-thick-grey p20">
+					<div class="header">
+						<div class="left">
+							<span>Session Basic Information - Tell us about your Session<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#session-details-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+
+					</div>
+					<div class="body">
+						<!--Just add input boxes, no labels-->
+						<input type="text" id="shortTitle" class="mt15" placeholder="Enter Short Title" name="shortTitle" data-validation="required"/>
+						<input type="text" id="longTitle" class="mt15" placeholder="Enter Long Title" name="longTitle" data-validation="required"/>
+						<input type="text" id="shortDesc" class="mt15" placeholder="Describe your session precisely" name="shortDesc" data-validation="required"/>
+						<textarea id="longDesc" class="mt15" placeholder="Elaborate your session in detail" rows="6" cols="40" name="longDesc" data-validation="required"></textarea>
+						<div id="sessionCategoriesDropdown" class="mt15"></div>
+
+						<!-- Hidden values -->
+						<input type="hidden" id="eventIdSession" name="eventId"/> 
+						<input type="hidden" id="speakersList" name="presenters" data-validation="required"/> 
+						<input type="hidden" id="categoriesList" name="categories"/>
+					    <input type="hidden" id="sessionImgBase64" name="imgBase64" data-validation="required"/> 
+					    <input type="hidden" id="sessionImgId" name="image"/>
+					    <input type="hidden" id="locationLat" name="locationLat" data-validation="required"/>
+					    <input type="hidden" id="locationLong" name="locationLong" data-validation="required"/>
+					    <input type="hidden" id="startDate" name="startDate"/>
+					    <input type="hidden" id="endDate" name="endDate"/>
+					    <input type="hidden" id="endTime" name="endTime"/>
+					    <input type="hidden" id="startTime" name="startTime"/>
+					    <input type="hidden" id="addressText" name="addressText"/>
+					    <input type="hidden" id="hall" name="hall"/>
+					</div>
+				</div>
+			</form> <!-- Session Form Ends Here -->
+			<form id="sessionTimingsForm" class="hide">
+				<div id="session-location-container" class="bg-thick-grey p20 mt30">
+					<div class="header">
+						<div class="left">
+							<span>Session Location Information - Specify where it's held<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#session-location-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div class="body">
+						<!--Just add input boxes, no labels-->
+						<div id="sessionTimingsContainer">
+							<div id="timings-action-links-wrapper" class="right">
+								<ul>
+									<li class="left pr20"><a id="add-session-timings-link" class="link clblue"><i class="fa fa-list-ol pr5"></i>Add additional session times</a></li>
+								</ul>
+							</div>
+							<div id="sessionTimings">
+								<ul class="datetime left">
+									<li class="dt-date">
+										<input type="text" class="date startDate" placeholder="Start Date" id="startDate0" name="startDate0" data-validation="date" data-validation-format="mm/dd/yyyy"/><i class="fa fa-calendar right pr5"></i>
+									</li>
+		       						<li class="dt-time">
+		       							<input type="text" class="time" placeholder="Start Time" id="startTime0" name="startTime0" data-validation="custom" data-validation-regexp="^\d\d:\d\d [APap][mM]$"/><i class="fa fa-clock-o right pr5"></i>
+		       						</li>
+		       						<li class="dt-time">
+		       							<input type="text" class="time" placeholder="End Time" id="endTime0" name="endTime0" data-validation="custom" data-validation-regexp="^\d\d:\d\d [APap][mM]$"/><i class="fa fa-clock-o right pr5"></i>
+		       						</li>
+								</ul>
+								<input type="text" id="addressText0" placeholder="Lookup for location" name="addressText" data-validation="required"/>
+								<input type="text" id="hall0" class="mt15" placeholder="Enter Hall/Building Name" name="hall" data-validation="required"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+				<div id="session-banner-container" class="bg-thick-grey p20 mt30 hide">
+					<div class="header">
+						<div class="left">
+							<span>Session Banner - Give us the image that suits your session<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#session-banner-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div class="body">
+						<form id="sessionbanner_form" method="POST" enctype="multipart/form-data" class="sessionbanner-form" target="submit-iframe">
+							<div>
+								 <img id="sessionImgBanner" src="../images/noimage.png" width="760px" height="250px"/>
+								 <div id="upload-session" class="mt40">
+									<a class="btn btn-small btn-black" style="cursor: pointer !important;">Upload Session Image</a>
+									<input type="file" id="sessionImg" class="file" name="*">
+								</div>
+						    	 <input type="hidden" name="*@TypeHint" value="nt:file" />
+							</div>
+						</form> <!-- Session Banner Form Ends Here -->
+					</div>
+				</div>		
+				<div id="session-speaker-container" class="bg-thick-grey p20 mt30 hide">
+					<div class="header">
+						<div class="left">
+							<span>Session Speakers - Add list of speakers for this session<span></span> <span class="required fs20">*</span>
+						</div>
+						<div class="right">
+							<a class="toggle link clblue" data-reference="#session-speaker-container"><i class="fa fa-expand clblue pr5"></i>Show</a>
+						</div>
+					</div>
+					<div id="successPlaceholder" class="hide mt40">
+						<i class="fa fa-check pr5" style="color:green"></i><span class="successText">You have successfully created new speaker for your session. Add more speakers or click save.</span>
+					</div>
+
+					<div id="errorPlaceholder" class="hide mt40">
+						<i class="fa fa-warning pr5" style="color:orangered"></i><span class="errorText">Something went wrong. Contact system admin for more details</span>
+					</div>
+					<div class="body">
+						<div id="speaker-action-links-wrapper" class="right">
+							<ul>
+								<li class="left pr20"><a id="choose-speakers-link" class="link clblue"><i class="fa fa-list-ol pr5"></i>Choose Speakers</a></li>
+								<li class="right"><a id="add-new-speaker-btn" class="link clblue"><i class="fa fa-plus pr5"></i>Add New Speaker</a></li>
+							</ul>
+						</div>
+						<div id="speakersTableWrapper">
+							<table id="speakersDTable" class="display" width="100%"></table>
+						</div>
+						<div id="addSpeakerDialog">
+						<div id="add-new-speaker-inline" class="hide">
+							<div class="left col70 pr10">
+								<form method="POST" id="speakerForm" class="speakerForm">
+								<input type="text" id="firstName" placeholder="First Name" class="mt15" name="firstName" />
+								<input type="text" id="lastName" placeholder="Last Name" class="mt15" name="lastName" />
+								<input type="text" id="shortDesc" placeholder="Speaker bio in few words" class="mt15" name="shortDesc"></input>
+								<textarea id="longDesc" name="longDesc" placeholder="Elaborated speaker bio" class="mt15" rows="6" cols="40"></textarea> 
+								<input type="text" id="email"  placeholder="Official Email" class="mt15" name="email" />
+								<input type="text" id="phone"  placeholder="Contact Number" class="mt15" name="phone" />
+								<input type="text" id="designation"  placeholder="Designation" class="mt15" name="designation" />
+								<input type="text" id="linkedInLink"  placeholder="Linked In Profile Link" class="mt15" name="linkedInLink" />
+								<input type="text" id="twitterLink"  placeholder="Twitter Profile Link" class="mt15" name="twitterLink" />
+								<input type="hidden" id="speakerImgBase64" name="imgBase64"/> 
+							    <input type="hidden" id="speakerImgId" name="image"/>
+							    <input type="hidden" id="eventIdSpeaker" name="eventId"/>
+								</form>
+							</div>
+							<div class="right col30 mt15 pl20">
+								<form id="speakerphoto_form" method="POST" enctype="multipart/form-data" class="speakerphoto-form" target="submit-iframe">
+								<div>
+									<img id="speakerImgBanner" class="mt30" src="../images/noprofile.gif" width="200px" height="250px">
+									 <div id="upload-speaker" class="">
+										<a class="btn btn-small btn-black" style="cursor: pointer !important;">Upload Speaker Photo</a>
+										<input type="file" id="speakerImg" class="file" name="*">
+									</div>
+									<input type="hidden" name="*@TypeHint" value="nt:file" />
+								</div>
+								<div class="right mt30">
+									<a id="save-speaker-link" class="btn btn-small btn-light-blue"><i class="fa fa-check pr5"></i>Save</a>
+									<a id="update-speaker-link" class="btn btn-small btn-light-blue"><i class="fa fa-check pr5"></i>Update</a>
+								</div>
+								<div class="left mt30">
+									<a id="cancel-speaker-link" class="btn btn-small btn-black"><i class="fa fa-times-circle pr5"></i>Cancel</a>
+								</div>
+								</form>
+
+							</div>
+						</div>
+						</div>
+					</div>
+				</div>					
+				<div id="session-action-links-wrapper" class="mt30 hide">
+					<ul class="fx fx-center mb40">
+						<li class="left pr20"><a id="cancel-session-link" class="btn btn-black"><i class="fa fa-times-circle pr5"></i>Cancel</a></li>
+						<li class="right"><a id="save-session-link" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Save</a></li>
+						<li class="right"><a id="update-session-link" class="btn btn-light-blue"><i class="fa fa-check pr5"></i>Update</a></li>
+					</ul>
+				</div>
+</div>
